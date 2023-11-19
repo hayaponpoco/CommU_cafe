@@ -2,11 +2,13 @@ import time
 import PySimpleGUI as sg
 from robottools import RobotTools
 
-rt = RobotTools('192.168.10.111', 22222)
-servo_map = dict(BODY_Y=0, MOUTH=1, L_SHOU_R=0, BODY_P=-2, R_EYE_Y=5, L_EYE_Y=-5,
-                EYELID=-2, HEAD_R=0, R_SHOU_R=0, HEAD_P=0, EYES_P=0, R_SHOU_P=-43,
-                L_SHOU_P=43, HEAD_Y=0)
-pose = dict(Msec=500, ServoMap=servo_map)
+rt = RobotTools('192.168.11.19', 22222)
+reset_servo_map = dict(
+    BODY_P=0, BODY_Y=0,
+    L_SHOU_R=0, L_SHOU_P=43, R_SHOU_R=0, R_SHOU_P=-43,
+    L_EYE_Y=-5, R_EYE_Y=5, EYES_P=0, EYELID=-2,
+    HEAD_R=0, HEAD_P=-12, HEAD_Y=0, MOUTH=1)
+pose = dict(Msec=500, ServoMap=reset_servo_map)
 rt.play_pose(pose)
 
 # GUI設定
@@ -32,9 +34,8 @@ layout.append(
 # 発話ボタンのレイアウト
 layout.append(
     [
-        sg.Button('アイスコーヒー', key='coffee'),
-        sg.Button('アイスラテ', key='ratte'),
-        sg.Button('オレンジジュース', key='orange')
+        sg.Button('お水', key='water'),
+        sg.Button('お茶', key='tea')
     ]
 )
 
@@ -76,18 +77,13 @@ while True:
         print('Window event is None. exit')
         break
 
-    elif event == 'coffee':
-        d = rt.say_text("ご注文はアイスコーヒーでお間違い無いでしょうか？")
+    elif event == 'water':
+        d = rt.say_text("ご注文はお水でお間違い無いでしょうか？")
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
-    elif event == 'ratte':
-        d = rt.say_text("ご注文はアイスラテでお間違い無いでしょうか？")
-        m = rt.make_beat_motion(d)
-        rt.play_motion(m)
-
-    elif event == 'orange':
-        d = rt.say_text("ご注文はオレンジジュースでお間違い無いでしょうか？")
+    elif event == 'tea':
+        d = rt.say_text("ご注文はお茶でお間違い無いでしょうか？")
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
@@ -108,23 +104,20 @@ while True:
         time.sleep(d)
 
         # ポーズリセット
-        servo_map = dict(BODY_Y=0, MOUTH=1, L_SHOU_R=0, BODY_P=-2, R_EYE_Y=5, L_EYE_Y=-5,
-                        EYELID=-2, HEAD_R=0, R_SHOU_R=0, HEAD_P=0, EYES_P=0, R_SHOU_P=-43,
-                        L_SHOU_P=43, HEAD_Y=0)
+        servo_map = reset_servo_map
         pose = dict(Msec=500, ServoMap=servo_map)
         rt.play_pose(pose)
 
     elif event == 'order_miss':
         # お辞儀して謝る
-        servo_map = dict(BODY_P=1)
+        servo_map = dict(BODY_P=1, HEAD_P=23)
         pose = dict(Msec=500, ServoMap=servo_map)
         rt.play_pose(pose)
         d = rt.say_text("大変失礼いたしました。")
         time.sleep(d)
 
         # ポーズを元に戻す
-        servo_map = dict(BODY_P=-2)
-        pose = dict(Msec=500, ServoMap=servo_map)
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
         rt.play_pose(pose)
 
         # もう一度注文を聞く
@@ -139,14 +132,13 @@ while True:
 
     elif event == 'start':
         # お辞儀して「いらっしゃいませ」という
-        servo_map = dict(BODY_P=1)
+        servo_map = dict(BODY_P=1, HEAD_P=23)
         pose = dict(Msec=500, ServoMap=servo_map)
         rt.play_pose(pose)
         d = rt.say_text("いらっしゃいませ。")
         time.sleep(d)
         # ポーズを元に戻す
-        servo_map = dict(BODY_P=-2)
-        pose = dict(Msec=500, ServoMap=servo_map)
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
         rt.play_pose(pose)
         # 注文を聞く
         d = rt.say_text("ご注文をお伺いいたします。")
@@ -154,21 +146,17 @@ while True:
 
     elif event == 'thank':
         # お辞儀して「ありがとうございました」という
-        servo_map = dict(BODY_P=1)
+        servo_map = dict(BODY_P=1, HEAD_P=23)
         pose = dict(Msec=500, ServoMap=servo_map)
         rt.play_pose(pose)
         d = rt.say_text("ありがとうございました。")
         time.sleep(d)
         # ポーズを元に戻す
-        servo_map = dict(BODY_P=-2)
-        pose = dict(Msec=500, ServoMap=servo_map)
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
         rt.play_pose(pose)
 
     elif event == 'reset':
-        servo_map = dict(BODY_Y=0, MOUTH=1, L_SHOU_R=0, BODY_P=-2, R_EYE_Y=5, L_EYE_Y=-5,
-                        EYELID=-2, HEAD_R=0, R_SHOU_R=0, HEAD_P=0, EYES_P=0, R_SHOU_P=-43,
-                        L_SHOU_P=43, HEAD_Y=0)
-        pose = dict(Msec=500, ServoMap=servo_map)
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
         rt.play_pose(pose)
     else:
         pass

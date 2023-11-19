@@ -2,7 +2,7 @@ import time
 import PySimpleGUI as sg
 from robottools import RobotTools
 
-rt = RobotTools('192.168.10.111', 22222)
+rt = RobotTools('192.168.11.18', 22222)
 servo_map = dict(BODY_Y=0, MOUTH=1, L_SHOU_R=0, BODY_P=-2, R_EYE_Y=5, L_EYE_Y=-5,
                 EYELID=-2, HEAD_R=0, R_SHOU_R=0, HEAD_P=0, EYES_P=0, R_SHOU_P=-43,
                 L_SHOU_P=43, HEAD_Y=0)
@@ -32,9 +32,8 @@ layout.append(
 # 発話ボタンのレイアウト
 layout.append(
     [
-        sg.Button('アイスコーヒー', key='coffee'),
-        sg.Button('アイスラテ', key='ratte'),
-        sg.Button('オレンジジュース', key='orange')
+        sg.Button('お水', key='water'),
+        sg.Button('お茶', key='tea')
     ]
 )
 
@@ -76,18 +75,13 @@ while True:
         print('Window event is None. exit')
         break
 
-    elif event == 'coffee':
-        d = rt.say_text("お待たせいたしました。アイスコーヒーでございます。ご注文された品は全てお揃いでしょうか？")
+    elif event == 'water':
+        d = rt.say_text("お待たせいたしました。お水でございます。ご注文された品は全てお揃いでしょうか？")
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
-    elif event == 'ratte':
-        d = rt.say_text("お待たせいたしました。アイスラテでございます。ご注文された品は全てお揃いでしょうか？")
-        m = rt.make_beat_motion(d)
-        rt.play_motion(m)
-
-    elif event == 'orange':
-        d = rt.say_text("お待たせいたしました。オレンジジュースでございます。ご注文された品は全てお揃いでしょうか？")
+    elif event == 'tea':
+        d = rt.say_text("お待たせいたしました。お茶でございます。ご注文された品は全てお揃いでしょうか？")
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
