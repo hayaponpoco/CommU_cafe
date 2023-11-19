@@ -1,6 +1,7 @@
 test.py
 __pycache__
 
+.DS_Store
 .python-version
 venv-Sota-CommU
 requirements.txt
