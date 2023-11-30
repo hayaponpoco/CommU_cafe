@@ -4,7 +4,6 @@ __pycache__
 .DS_Store
 .python-version
 venv-Sota-CommU
-requirements.txt
 tutorial
 *.mp3
 *.wav
