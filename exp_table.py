@@ -2,7 +2,7 @@ import time
 import PySimpleGUI as sg
 from robottools import RobotTools
 
-rt = RobotTools('192.168.11.18', 22222)
+rt = RobotTools('192.168.11.19', 22222)
 servo_map = dict(BODY_Y=0, MOUTH=1, L_SHOU_R=0, BODY_P=-2, R_EYE_Y=5, L_EYE_Y=-5,
                 EYELID=-2, HEAD_R=0, R_SHOU_R=0, HEAD_P=0, EYES_P=0, R_SHOU_P=-43,
                 L_SHOU_P=43, HEAD_Y=0)
@@ -18,7 +18,6 @@ layout = []
 # モーションボタンのレイアウト
 layout.append(
     [
-        sg.Button('いらっしゃいませ', key='start'),
         sg.Button('ポーズリセット', key='reset')
     ]
 )
@@ -145,21 +144,6 @@ while True:
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
-    elif event == 'start':
-        # お辞儀して「いらっしゃいませ」という
-        servo_map = dict(BODY_P=1)
-        pose = dict(Msec=500, ServoMap=servo_map)
-        rt.play_pose(pose)
-        d = rt.say_text("いらっしゃいませ。")
-        time.sleep(d)
-        # ポーズを元に戻す
-        servo_map = dict(BODY_P=-2)
-        pose = dict(Msec=500, ServoMap=servo_map)
-        rt.play_pose(pose)
-        # 注文を聞く
-        d = rt.say_text("ご注文をお伺いいたします。")
-        time.sleep(d)
-
     elif event == 'thank':
         d = rt.say_text("この度はカフェをご利用いただき")
         time.sleep(d)
@@ -177,6 +161,23 @@ while True:
         d = rt.say_text("またのご利用お待ちしております")
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
+        time.sleep(d)
+        
+        d = rt.say_text("出口は")
+        time.sleep(d)
+        servo_map = dict(BODY_Y=-20, R_SHOU_R=20, R_SHOU_P=20)
+        pose = dict(Msec=500, ServoMap=servo_map)
+        rt.play_pose(pose)
+        d = rt.say_text("あちらになります。")
+        time.sleep(d)
+        
+        # ポーズを元に戻す
+        servo_map = dict(BODY_Y=0, MOUTH=1, L_SHOU_R=0, BODY_P=-2, R_EYE_Y=5, L_EYE_Y=-5,
+                        EYELID=-2, HEAD_R=0, R_SHOU_R=0, HEAD_P=0, EYES_P=0, R_SHOU_P=-43,
+                        L_SHOU_P=43, HEAD_Y=0)
+        pose = dict(Msec=500, ServoMap=servo_map)
+        rt.play_pose(pose)
+        d = rt.say_text("お気をつけておかえりください。")
         time.sleep(d)
 
     elif event == 'reset':
