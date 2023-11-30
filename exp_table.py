@@ -186,12 +186,10 @@ while True:
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
-
     elif event == 'speak_free':
         d = rt.say_text(values['free_speech_field'])
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
-
 
     elif event == 'reset':
         pose = dict(Msec=500, ServoMap=reset_servo_map)
