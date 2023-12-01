@@ -1,0 +1,195 @@
+---
+title: "JR"
+output: html_document
+date: "2023-11-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## import data
+```{r}
+original <- read.csv("data.csv", header = T, row.names = 1)
+original <- original[6:31]
+```
+
+### change column name
+1. 最新の設備を整えている  
+2. 施設の見た目は立派である
+3. スタッフの身なりがきちんとしている  
+4. 施設の外観は、提供されるサービスの種類と一致している  
+5. 約束を守る  
+6. お客様が問題を抱えているときに、誠実に対応してくれる  
+7. 頼りになる  
+8. 時間通りにサービスを提供してくれる  
+9. 正確に記録を管理している  
+10. いつサービスが提供されるか正確に伝わっている  
+11. 迅速なサービスが期待できる  
+12. いつも進んでお客様に力を貸そうとするわけではない  
+13. 忙しくてもお客様の要望に迅速に対応してくれるわけではない  
+14. スタッフを信頼できる  
+15. スタッフと安心して接することができる  
+16. スタッフは礼儀正しい  
+17. スタッフはお客様の質問に答えられるだけの十分な知識を持っている  
+18. お客様一人ひとりの要望に合わせて対応していない  
+19. スタッフは個人的な要望をくみ取ってくれない  
+20. スタッフはお客様が何を必要としているかが分かっていない  
+21. お客様の一番関心のあることを気にかけてくれない  
+22. 営業時間は便利でない
+```{r}
+colnames(original) <- c("gender", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "staff", "beverage", "amount")
+```
+
+## arrange data
+
+### 因子の数値化
+```{r}
+d <- data.frame(original, stringsAsFactors = T)
+d_size <- length(d$gender)
+rownames(d) <- c(1:d_size)
+
+for (i in 2:23) {
+  if (grepl("ない", colnames(d[i]))) {
+    for (j in 1:d_size) {
+      if (d[j, i] == "全くそう思わない") {
+        d[j, i] <- 7
+      } else if (d[j, i] == "そう思わない") {
+        d[j, i] <- 6
+      } else if (d[j, i] == "ややそう思わない") {
+        d[j, i] <- 5
+      } else if (d[j, i] == "どちらともいえない") {
+        d[j, i] <- 4
+      } else if (d[j, i] == "ややそう思う") {
+        d[j, i] <- 3
+      } else if (d[j, i] == "そう思う") {
+        d[j, i] <- 2
+      } else if (d[j, i] == "強くそう思う") {
+        d[j, i] <- 1
+      } else {
+        d[j, i] <- NA
+      }
+    }
+  } else {
+    for (j in 1:d_size) {
+      if (d[j, i] == "全くそう思わない") {
+        d[j, i] <- 1
+      } else if (d[j, i] == "そう思わない") {
+        d[j, i] <- 2
+      } else if (d[j, i] == "ややそう思わない") {
+        d[j, i] <- 3
+      } else if (d[j, i] == "どちらともいえない") {
+        d[j, i] <- 4
+      } else if (d[j, i] == "ややそう思う") {
+        d[j, i] <- 5
+      } else if (d[j, i] == "そう思う") {
+        d[j, i] <- 6
+      } else if (d[j, i] == "強くそう思う") {
+        d[j, i] <- 7
+      } else {
+        d[j, i] <- NA
+      }
+    }
+  }
+  d[,i] <- as.integer(d[,i])
+}
+```
+
+
+### convert Japanese to English
+```{r}
+for (i in 1:d_size) {
+  # gender
+  if (d$gender[i] == "女性"){
+    d$gender[i] <- "w"
+  } else if (d$gender[i] == "男性") {
+    d$gender[i] <- "m"
+  } else {
+    d$gender[i] <- NA
+  }
+  
+  #staff
+  if (d$staff[i] == "人"){
+    d$staff[i] <- "h"
+  } else if (d$staff[i] == "ロボット") {
+    d$staff[i] <- "r"
+  } else {
+    d$staff[i] <- NA
+  }
+  
+  #beverage
+  if (d$beverage[i] == "茶"){
+    d$beverage[i] <- "t"
+  } else if (d$beverage[i] == "水") {
+    d$beverage[i] <- "w"
+  } else {
+    d$beverage[i] <- NA
+  }
+}
+```
+
+### convert character to factor
+```{r}
+d <- as.data.frame(unclass(d), stringsAsFactors = T)
+```
+
+### divide by staff
+```{r}
+# data of robot condition
+dr <- subset(d, staff=="r")
+
+# data of human condition
+dh <- subset(d, staff=="h")
+```
+
+
+## analysis (quantitative)
+### import package
+```{r}
+library(psych)
+library(lattice)
+library(polycor)
+```
+
+### summary
+```{r}
+summary(dr$amount)
+summary(dh$amount)
+```
+
+### t-test
+```{r}
+t.test(dr$amount, dh$amount, alternative = "two.sided", var.equal = F, paired = F)
+```
+
+
+### 1-factor
+```{r}
+res.aov <- aov(amount ~ staff, data = d)
+summary(res.aov)
+```
+
+## analysis (qualitative)
+### dataset
+```{r}
+dq <- d[2:8]
+rownames(dq) <- c(1:d_size)
+```
+
+### summary
+```{r}
+summary(dq)
+```
+
+### visualization
+```{r}
+st.data <- stack(dq)
+histogram(~ values | ind, data = st.data, nint = 7, layout = c(5, 5))
+```
+
+
+### polychoric
+```{r}
+res.fa <- fa(dq, 2, fm="ml", rotate = "promax")
+```
+
