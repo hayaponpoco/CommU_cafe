@@ -2,12 +2,14 @@ import time
 import PySimpleGUI as sg
 from robottools import RobotTools
 
-rt = RobotTools('192.168.11.19', 22222)
+rt = RobotTools('192.168.11.18', 22222)    # まぶたが故障しているCommU
 reset_servo_map = dict(
     BODY_P=0, BODY_Y=0,
-    L_SHOU_R=0, L_SHOU_P=43, R_SHOU_R=0, R_SHOU_P=-43,
-    L_EYE_Y=-5, R_EYE_Y=5, EYES_P=0, EYELID=-2,
-    HEAD_R=0, HEAD_P=-12, HEAD_Y=0, MOUTH=1)
+    L_SHOU_P=43, L_SHOU_R=0, R_SHOU_P=-43, R_SHOU_R=0,
+    HEAD_P=-12, HEAD_R=0, HEAD_Y=0,
+    EYES_P=0, L_EYE_Y=-5, R_EYE_Y=5, EYELID=-2,
+    MOUTH=1
+)
 pose = dict(Msec=500, ServoMap=reset_servo_map)
 rt.play_pose(pose)
 
@@ -68,7 +70,7 @@ layout.append(
 
 
 # ウインドウにレイアウトを設定
-window = sg.Window('Sota controller', layout)
+window = sg.Window('CommU controller for counter', layout)
 
 # Event loop
 while True:
@@ -76,6 +78,23 @@ while True:
     if event is None:
         print('Window event is None. exit')
         break
+
+    elif event == 'start':
+        # お辞儀して「いらっしゃいませ」という
+        servo_map = dict(BODY_P=1, HEAD_P=23)
+        pose = dict(Msec=500, ServoMap=servo_map)
+        rt.play_pose(pose)
+        d = rt.say_text("いらっしゃいませ。")
+        time.sleep(d)
+
+        # ポーズを元に戻す
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
+        rt.play_pose(pose)
+
+        # 注文を聞く
+        d = rt.say_text("ご注文をお伺いします。")
+        time.sleep(d)
+
 
     elif event == 'water':
         d = rt.say_text("ご注文はお水でお間違い無いでしょうか？")
@@ -97,15 +116,26 @@ while True:
         d = rt.say_text("それでは")
         time.sleep(d)
 
-        servo_map = dict(BODY_Y=20, L_SHOU_R=-20, L_SHOU_P=-20)
+        servo_map = dict(BODY_Y=20,  L_SHOU_P=-20, L_SHOU_R=-20)
         pose = dict(Msec=500, ServoMap=servo_map)
         rt.play_pose(pose)
         d = rt.say_text("あちらのお席でお待ちくださいませ。")
         time.sleep(d)
 
         # ポーズリセット
-        servo_map = reset_servo_map
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
+        rt.play_pose(pose)
+
+    elif event == 'thank':
+        # お辞儀して「ありがとうございました」という
+        servo_map = dict(BODY_P=1, HEAD_P=23)
         pose = dict(Msec=500, ServoMap=servo_map)
+        rt.play_pose(pose)
+        d = rt.say_text("ありがとうございました。")
+        time.sleep(d)
+
+        # ポーズを元に戻す
+        pose = dict(Msec=500, ServoMap=reset_servo_map)
         rt.play_pose(pose)
 
     elif event == 'order_miss':
@@ -125,35 +155,12 @@ while True:
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
+
     elif event == 'speak_free':
         d = rt.say_text(values['free_speech_field'])
         m = rt.make_beat_motion(d)
         rt.play_motion(m)
 
-    elif event == 'start':
-        # お辞儀して「いらっしゃいませ」という
-        servo_map = dict(BODY_P=1, HEAD_P=23)
-        pose = dict(Msec=500, ServoMap=servo_map)
-        rt.play_pose(pose)
-        d = rt.say_text("いらっしゃいませ。")
-        time.sleep(d)
-        # ポーズを元に戻す
-        pose = dict(Msec=500, ServoMap=reset_servo_map)
-        rt.play_pose(pose)
-        # 注文を聞く
-        d = rt.say_text("ご注文をお伺いいたします。")
-        time.sleep(d)
-
-    elif event == 'thank':
-        # お辞儀して「ありがとうございました」という
-        servo_map = dict(BODY_P=1, HEAD_P=23)
-        pose = dict(Msec=500, ServoMap=servo_map)
-        rt.play_pose(pose)
-        d = rt.say_text("ありがとうございました。")
-        time.sleep(d)
-        # ポーズを元に戻す
-        pose = dict(Msec=500, ServoMap=reset_servo_map)
-        rt.play_pose(pose)
 
     elif event == 'reset':
         pose = dict(Msec=500, ServoMap=reset_servo_map)
