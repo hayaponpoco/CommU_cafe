@@ -36,7 +36,8 @@ def barplot_annotate_bracket(
         pad: float = 0.01,
         color: Optional[ColorType] = 'black',
         linewidth: Optional[float] = None,
-        fontsize: Optional[int | float] = None
+        fontsize: Optional[int | float] = None,
+        ax: Optional[plt.Axes] = None
     ) -> None:
     """
     Annotate barplot with p-values.
@@ -59,6 +60,7 @@ def barplot_annotate_bracket(
     :param color: Color of bracket and text.
     :param linewidth: Line width in points.
     :param fontsize: Font size.
+    :param ax: Axes object to draw the plot onto, otherwise uses the current Axes.
 
     Notes
     -----
@@ -145,12 +147,18 @@ def barplot_annotate_bracket(
     kwargs: dict[str, Any] = dict(c=color)
     if linewidth is not None:
         kwargs['linewidth'] = linewidth
-    plt.plot(barx, bary, **kwargs)  # bracket
+    if ax is None:
+        plt.plot(barx, bary, **kwargs)  # bracket
+    else:
+        ax.plot(barx, bary, **kwargs)   # bracket
 
     kwargs = dict(c=color, ha='center', va='bottom')
     if fontsize is not None:
         kwargs['fontsize'] = fontsize
-    plt.text(*mid, text, **kwargs)  # text
+    if ax is None:
+        plt.text(*mid, text, **kwargs)  # text
+    else:
+        ax.text(*mid, text, **kwargs)   # text
 
 
 if __name__ == '__main__':
