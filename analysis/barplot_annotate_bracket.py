@@ -127,9 +127,12 @@ def barplot_annotate_bracket(
         else:
             text = 'n.s.'
 
+    center = np.array(center)
+    height = np.array(height)
     lx, ly = center[num1], height[num1]
     rx, ry = center[num2], height[num2]
     if yerr is not None:
+        yerr = np.array(yerr)
         ly += yerr[num1]
         ry += yerr[num2]
 
