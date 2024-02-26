@@ -96,22 +96,22 @@ def barplot_annotate_bracket(
     >>> 
     >>> plt.figure(figsize=(4, 5))
     >>> plt.bar(
-    >>>     bars, heights, width, tick_label=label, yerr=std,
-    >>>     align='center', alpha=0.5, ecolor='black', capsize=5
-    >>> )
+    ...     bars, heights, width, tick_label=label, yerr=std,
+    ...     align='center', alpha=0.5, ecolor='black', capsize=5
+    ... )
     >>> plt.ylim(0, 5)
     >>> barplot_annotate_bracket(
-    >>>     0, 1, p01_value,
-    >>>     bars, heights, yerr=std
-    >>> )
+    ...     0, 1, p01_value,
+    ...     bars, heights, yerr=std
+    ... )
     >>> barplot_annotate_bracket(
-    >>>     0, 2, 'p < 0.001',
-    >>>     bars, heights, yerr=std
-    >>> )
+    ...     0, 2, 'p < 0.001',
+    ...     bars, heights, yerr=std
+    ... )
     >>> barplot_annotate_bracket(
-    >>>     1, 2, p12_value,
-    >>>     bars, heights, yerr=std, dh=0.2
-    >>> )
+    ...     1, 2, p12_value,
+    ...     bars, heights, yerr=std, dh=0.2
+    ... )
     >>> plt.show()
     """
 
